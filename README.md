@@ -1,4 +1,4 @@
-# vanity-eth-address
+# VAS: vanity-eth-address
 
 ## Why this repo
 I saw quite a lot beautiful address in the web3, which let me thought, it might be a common needs for everyone. So I decide to write a helper for anyone to find the crypto address meaningful.
@@ -29,11 +29,11 @@ Ok, I think two things will be really helpful for this tool
 
 
 ## Build from source
-
+```
 go mod tidy
 go build
 go run main.go -c "arweave" "^6.*8$"
-
+```
 
 ## Usage
 
@@ -79,4 +79,4 @@ Thanks https://github.com/maximousblk/wave.go for the arweave code
 
 
 ## Tips
-If you like the tool, you can send your tips over to 0x90822EE56ffBC14F3216846D967459aF268ed80C. ERC20 token is accepted.
+If you like the tool, you can send your tips over to `0x90822EE56ffBC14F3216846D967459aF268ed80C` 💛💛💛. ERC20 token is accepted.
