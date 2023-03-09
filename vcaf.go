@@ -140,7 +140,7 @@ func generateFunc(this js.Value, args []js.Value) interface{} {
 }
 
 func main() {
-	done := make(chan int, 0)
-	js.Global().Set("generate", js.FuncOf(generateFunc))
+	done := make(chan int)
+	js.Global().Set("vcafGenerate", js.FuncOf(generateFunc))
 	<-done
 }
