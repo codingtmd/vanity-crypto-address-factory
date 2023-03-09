@@ -76,7 +76,7 @@ Wallets: 1
 
 ## Thanks to
 1. https://github.com/maximousblk/wave.go for the arweave code
-2. chatgpt, which helps write the ethereum code. Awesome AI!
+2. chatgpt, which helps write the ethereum code. **Awesome AI!**
 
 
 ## Tips
