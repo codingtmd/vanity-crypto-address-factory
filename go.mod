@@ -5,7 +5,6 @@ go 1.20
 require (
 	github.com/alexflint/go-arg v1.4.3
 	github.com/ethereum/go-ethereum v1.11.3
-	github.com/mendsley/gojwk v0.0.0-20141217222730-4d5ec6e58103
 
 )
 

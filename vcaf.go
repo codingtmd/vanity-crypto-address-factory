@@ -2,15 +2,11 @@ package main
 
 import (
 	// Standard
-	"encoding/json"
 	"fmt"
-	"io/ioutil"
-	"os"
-	"path/filepath"
 	"regexp"
+	"syscall/js"
 
 	// Third Party
-	"github.com/alexflint/go-arg"
 
 	// Internal libs
 
@@ -26,18 +22,18 @@ var (
 )
 
 // go-arg
-type args struct {
-	Crypto  string `arg:"-c,--crypto" default:"" help:"choose from ethereum, arweave"`
-	Workers int    `arg:"-w,--workers" default:"1" help:"Number of workers to spawn"`
-	Count   int    `arg:"-n,--number" default:"1" help:"Number of wallets to generate"`
-	Output  string `arg:"-o,--output" default:"./keyfiles" help:"Output directory"`
-	Pattern string `arg:"positional,required" help:"Regex pattern to match the wallet address"`
-}
+// type args struct {
+// 	Crypto  string `arg:"-c,--crypto" default:"" help:"choose from ethereum, arweave"`
+// 	Workers int    `arg:"-w,--workers" default:"1" help:"Number of workers to spawn"`
+// 	Count   int    `arg:"-n,--number" default:"1" help:"Number of wallets to generate"`
+// 	Output  string `arg:"-o,--output" default:"./keyfiles" help:"Output directory"`
+// 	Pattern string `arg:"positional,required" help:"Regex pattern to match the wallet address"`
+// }
 
 // set go-arg version and commit from GoReleaser
-func (args) Version() string {
-	return fmt.Sprintf("wave %v (%v)", version, commit[:8])
-}
+// func (args) Version() string {
+// 	return fmt.Sprintf("wave %v (%v)", version, commit[:8])
+// }
 
 // Factory function to create crypto type
 func NewCrypto(cryptoType string) common.Crypto {
@@ -51,24 +47,24 @@ func NewCrypto(cryptoType string) common.Crypto {
 	}
 }
 
-func writeToFile(outDir string, crypto string, wallet common.Wallet) {
+// func writeToFile(outDir string, crypto string, wallet common.Wallet) {
 
-	// get keyfile as json byte slice
-	keyfile, err := json.Marshal(wallet)
-	errcheck(err)
+// 	// get keyfile as json byte slice
+// 	keyfile, err := json.Marshal(wallet)
+// 	errcheck(err)
 
-	keyfilePath := filepath.Join(outDir, crypto+"-keyfile-"+wallet.Address+".json")
+// 	keyfilePath := filepath.Join(outDir, crypto+"-keyfile-"+wallet.Address+".json")
 
-	// Check if output directory exists
-	if _, err := os.Stat(outDir); os.IsNotExist(err) {
-		// If not, create it
-		derr := os.Mkdir(outDir, 0777)
-		errcheck(derr)
-	}
-	// Write keyfile to file
-	ioutil.WriteFile(keyfilePath, keyfile, 0666)
-	fmt.Println("[EMIT] keyfile:", keyfilePath)
-}
+// 	// Check if output directory exists
+// 	if _, err := os.Stat(outDir); os.IsNotExist(err) {
+// 		// If not, create it
+// 		derr := os.Mkdir(outDir, 0777)
+// 		errcheck(derr)
+// 	}
+// 	// Write keyfile to file
+// 	ioutil.WriteFile(keyfilePath, keyfile, 0666)
+// 	fmt.Println("[EMIT] keyfile:", keyfilePath)
+// }
 
 func worker(workerId int, pattern string, crypto common.Crypto, walletChan chan<- common.Wallet) {
 	for {
@@ -102,23 +98,25 @@ some example
 	// find an address start with 6 and end with 8, you can change to any word you want
 	go run main.go -c "arweave" "^6.*8$"
 */
-func main() {
+func generate(cryptoType string, numWorkers int, numWallets int, vanityPattern string) bool {
 	// parse commandline arguments
-	var args args
-	arg.MustParse(&args)
+	// var args args
+	// arg.MustParse(&args)
 
-	numWorkers := args.Workers                // Number of workers to spawn
-	numWallets := args.Count                  // Number of wallets to generate
-	vanityPattern := args.Pattern             // Regex pattern to match the wallet address
-	outDir := filepath.Join(args.Output)      // Output directory
+	// numWorkers := args.Workers                // Number of workers to spawn
+	// numWallets := args.Count                  // Number of wallets to generate
+	// vanityPattern := args.Pattern             // Regex pattern to match the wallet address
+	// outDir := filepath.Join(args.Output)      // Output directory
 	walletChan := make(chan common.Wallet, 1) // Channel to get wallets from workers
 
 	fmt.Println("Pattern:", "/"+vanityPattern+"/")
-	fmt.Println("Outputs:", outDir)
+	// fmt.Println("Outputs:", outDir)
 	fmt.Println("Workers:", numWorkers)
 	fmt.Println("Wallets:", numWallets)
 
-	crypto := NewCrypto(args.Crypto)
+	found := false
+
+	crypto := NewCrypto(cryptoType)
 
 	for n := 1; n <= numWallets; n++ {
 		// spawn workers
@@ -130,7 +128,19 @@ func main() {
 		k := <-walletChan
 
 		fmt.Println("[MATCH] address:", k.Address)
-		writeToFile(outDir, args.Crypto, k)
-
+		// writeToFile(outDir, args.Crypto, k)
+		found = true
 	}
+
+	return found
+}
+
+func generateFunc(this js.Value, args []js.Value) interface{} {
+	return js.ValueOf(generate(args[0].String(), args[1].Int(), args[2].Int(), args[3].String()))
+}
+
+func main() {
+	done := make(chan int, 0)
+	js.Global().Set("generate", js.FuncOf(generateFunc))
+	<-done
 }
