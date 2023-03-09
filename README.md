@@ -74,8 +74,9 @@ Wallets: 1
 [EMIT] keyfile: keyfiles\ethereum-keyfile-0xC94A7f5470E3bE4919F882cD3Ae0F7D76ce4A8E8.json
 ```
 
-## Reference
-Thanks https://github.com/maximousblk/wave.go for the arweave code
+## Thanks to
+1. https://github.com/maximousblk/wave.go for the arweave code
+2. chatgpt, which helps write the ethereum code. **Awesome AI!**
 
 
 ## Tips
