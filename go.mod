@@ -1,4 +1,4 @@
-module github.com/Telept-xyz/vanity-crypto-address
+module github.com/Telept-xyz/vanity-crypto-address-factory
 
 go 1.20
 

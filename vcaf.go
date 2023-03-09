@@ -14,9 +14,9 @@ import (
 
 	// Internal libs
 
-	"github.com/Telept-xyz/vanity-crypto-address/arweave"
-	"github.com/Telept-xyz/vanity-crypto-address/common"
-	"github.com/Telept-xyz/vanity-crypto-address/ethereum"
+	"github.com/Telept-xyz/vanity-crypto-address-factory/arweave"
+	"github.com/Telept-xyz/vanity-crypto-address-factory/common"
+	"github.com/Telept-xyz/vanity-crypto-address-factory/ethereum"
 )
 
 // GoReleaser
