@@ -4,7 +4,7 @@ import (
 	"crypto/ecdsa"
 	"encoding/hex"
 
-	"github.com/Telept-xyz/vanity-crypto-address/common"
+	"github.com/Telept-xyz/vanity-crypto-address-factory/common"
 	"github.com/ethereum/go-ethereum/crypto"
 )
 

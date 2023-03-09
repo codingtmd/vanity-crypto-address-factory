@@ -10,7 +10,7 @@ import (
 	"math/big"
 
 	// Third Party
-	"github.com/Telept-xyz/vanity-crypto-address/common"
+	"github.com/Telept-xyz/vanity-crypto-address-factory/common"
 )
 
 type Arweave struct{}

@@ -81,6 +81,15 @@ Wallets: 1
 [EMIT] keyfile: keyfiles\ethereum-keyfile-0xC94A7f5470E3bE4919F882cD3Ae0F7D76ce4A8E8.json
 ```
 
+## What I get so far
+I ran 
+vcaf -c "ethereum" "^0x666.*8888$"
+
+and I got
+
+**0x666885a437BaF927cE2424E7f353e5c264818888** what a fancy address!
+
+
 ## Thanks to
 1. https://github.com/maximousblk/wave.go for the arweave code
 2. chatgpt, which helps write the ethereum code. **Awesome AI!**
