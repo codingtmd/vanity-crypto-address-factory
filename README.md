@@ -1,4 +1,11 @@
-# VAS: vanity-eth-address
+# V-CAF: vanity-crypto-address-factory
+
+[![Go](https://github.com/Telept-xyz/vanity-crypto-address-factory/actions/workflows/go.yml/badge.svg?branch=main)](https://github.com/Telept-xyz/vanity-crypto-address-factory/actions/workflows/go.yml)
+[![License](https://flat.badgen.net/badge/license/MIT/cyan)](https://raw.githubusercontent.com/bokub/vanity-crypto-address-factory/master/LICENSE)
+[![Code style](https://flat.badgen.net/badge/code%20style/prettier/ff69b4)](https://github.com/bokub/prettier-config)
+
+
+[![V-CAF](./img/vcaf.png)
 
 ## Why this repo
 I saw quite a lot beautiful address in the web3, which let me thought, it might be a common needs for everyone. So I decide to write a helper for anyone to find the crypto address meaningful.
@@ -32,13 +39,13 @@ Ok, I think two things will be really helpful for this tool
 ```
 go mod tidy
 go build
-go run main.go -c "arweave" "^6.*8$"
+go run vcaf.go -c "arweave" "^6.*8$"
 ```
 
 ## Usage
 
 ```
-vca -h
+vcaf -h
 wave 0.2.0 (8e7c6876)
 Usage: vca [--workers WORKERS] [--number NUMBER] [--output OUTPUT] PATTERN
 
@@ -59,7 +66,7 @@ Options:
 ### Example
 
 ```
-vca -c "ethereum" ".*8$"
+vcaf -c "ethereum" ".*8$"
 Pattern: /.*8$/
 Outputs: keyfiles
 Workers: 1
@@ -77,6 +84,7 @@ Wallets: 1
 ## Thanks to
 1. https://github.com/maximousblk/wave.go for the arweave code
 2. chatgpt, which helps write the ethereum code. **Awesome AI!**
+3. Stable Diffusion, which helps me to generate the banner image
 
 
 ## Tips
