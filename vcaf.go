@@ -16,10 +16,10 @@ import (
 )
 
 // GoReleaser
-var (
-	version = "dev"
-	commit  = "untagged"
-)
+// var (
+// 	version = "dev"
+// 	commit  = "untagged"
+// )
 
 // go-arg
 // type args struct {
@@ -45,6 +45,11 @@ func NewCrypto(cryptoType string) common.Crypto {
 	default:
 		return nil
 	}
+}
+
+func toJs(key string, value interface{}) {
+	alert := js.Global().Get("onVcafMsg")
+	alert.Invoke(key, value)
 }
 
 // func writeToFile(outDir string, crypto string, wallet common.Wallet) {
@@ -78,6 +83,12 @@ func worker(workerId int, pattern string, crypto common.Crypto, walletChan chan<
 
 		fmt.Printf("[WORKER%v] address: %v | match: %v]\n", workerId, wallet.Address, match)
 
+		toJs("worker", map[string]interface{}{
+			"workerId": workerId,
+			"address":  wallet.Address,
+			"match":    match,
+		})
+
 		// send wallet to main if matched
 		if match {
 			walletChan <- wallet
@@ -98,7 +109,7 @@ some example
 	// find an address start with 6 and end with 8, you can change to any word you want
 	go run main.go -c "arweave" "^6.*8$"
 */
-func generate(cryptoType string, numWorkers int, numWallets int, vanityPattern string) bool {
+func generate(cryptoType string, vanityPattern string, numWorkers int, numWallets int) bool {
 	// parse commandline arguments
 	// var args args
 	// arg.MustParse(&args)
@@ -114,6 +125,8 @@ func generate(cryptoType string, numWorkers int, numWallets int, vanityPattern s
 	fmt.Println("Workers:", numWorkers)
 	fmt.Println("Wallets:", numWallets)
 
+	toJs("start", map[string]interface{}{})
+
 	found := false
 
 	crypto := NewCrypto(cryptoType)
@@ -128,15 +141,20 @@ func generate(cryptoType string, numWorkers int, numWallets int, vanityPattern s
 		k := <-walletChan
 
 		fmt.Println("[MATCH] address:", k.Address)
+
+		toJs("found", k)
+
 		// writeToFile(outDir, args.Crypto, k)
 		found = true
 	}
+
+	toJs("finish", map[string]interface{}{})
 
 	return found
 }
 
 func generateFunc(this js.Value, args []js.Value) interface{} {
-	return js.ValueOf(generate(args[0].String(), args[1].Int(), args[2].Int(), args[3].String()))
+	return js.ValueOf(generate(args[0].String(), args[1].String(), args[2].Int(), args[3].Int()))
 }
 
 func main() {
