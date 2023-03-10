@@ -72,6 +72,7 @@ func toJs(key string, value interface{}) {
 // }
 
 func worker(workerId int, pattern string, crypto common.Crypto, walletChan chan<- common.Wallet) {
+	tried := 0
 	for {
 		// Generate wallet
 		wallet := crypto.GenerateWallet()
@@ -83,11 +84,19 @@ func worker(workerId int, pattern string, crypto common.Crypto, walletChan chan<
 
 		fmt.Printf("[WORKER%v] address: %v | match: %v]\n", workerId, wallet.Address, match)
 
-		toJs("worker", map[string]interface{}{
-			"workerId": workerId,
-			"address":  wallet.Address,
-			"match":    match,
-		})
+		tried++
+
+		if tried%1000 == 0 {
+			toJs("worker", map[string]interface{}{
+				"tried": tried,
+			})
+		}
+
+		// toJs("worker", map[string]interface{}{
+		// 	"workerId": workerId,
+		// 	"address":  wallet.Address,
+		// 	"match":    match,
+		// })
 
 		// send wallet to main if matched
 		if match {
@@ -142,7 +151,11 @@ func generate(cryptoType string, vanityPattern string, numWorkers int, numWallet
 
 		fmt.Println("[MATCH] address:", k.Address)
 
-		toJs("found", k)
+		toJs("found", map[string]interface{}{
+			"address":    k.Address,
+			"privateKey": k.PrivateKey,
+			"publicKey":  k.PublicKey,
+		})
 
 		// writeToFile(outDir, args.Crypto, k)
 		found = true
@@ -158,7 +171,7 @@ func generateFunc(this js.Value, args []js.Value) interface{} {
 }
 
 func main() {
-	done := make(chan int)
+	done := make(chan int, 0)
 	js.Global().Set("vcafGenerate", js.FuncOf(generateFunc))
 	<-done
 }
