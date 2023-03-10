@@ -88,7 +88,8 @@ func worker(workerId int, pattern string, crypto common.Crypto, walletChan chan<
 
 		if tried%1000 == 0 {
 			toJs("worker", map[string]interface{}{
-				"tried": tried,
+				"tried":   tried,
+				"address": wallet.Address,
 			})
 		}
 
