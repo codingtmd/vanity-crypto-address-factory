@@ -15,26 +15,6 @@ import (
 	"github.com/Telept-xyz/vanity-crypto-address-factory/ethereum"
 )
 
-// GoReleaser
-// var (
-// 	version = "dev"
-// 	commit  = "untagged"
-// )
-
-// go-arg
-// type args struct {
-// 	Crypto  string `arg:"-c,--crypto" default:"" help:"choose from ethereum, arweave"`
-// 	Workers int    `arg:"-w,--workers" default:"1" help:"Number of workers to spawn"`
-// 	Count   int    `arg:"-n,--number" default:"1" help:"Number of wallets to generate"`
-// 	Output  string `arg:"-o,--output" default:"./keyfiles" help:"Output directory"`
-// 	Pattern string `arg:"positional,required" help:"Regex pattern to match the wallet address"`
-// }
-
-// set go-arg version and commit from GoReleaser
-// func (args) Version() string {
-// 	return fmt.Sprintf("wave %v (%v)", version, commit[:8])
-// }
-
 // Factory function to create crypto type
 func NewCrypto(cryptoType string) common.Crypto {
 	switch cryptoType {
@@ -52,25 +32,6 @@ func toJs(key string, value interface{}) {
 	alert.Invoke(key, value)
 }
 
-// func writeToFile(outDir string, crypto string, wallet common.Wallet) {
-
-// 	// get keyfile as json byte slice
-// 	keyfile, err := json.Marshal(wallet)
-// 	errcheck(err)
-
-// 	keyfilePath := filepath.Join(outDir, crypto+"-keyfile-"+wallet.Address+".json")
-
-// 	// Check if output directory exists
-// 	if _, err := os.Stat(outDir); os.IsNotExist(err) {
-// 		// If not, create it
-// 		derr := os.Mkdir(outDir, 0777)
-// 		errcheck(derr)
-// 	}
-// 	// Write keyfile to file
-// 	ioutil.WriteFile(keyfilePath, keyfile, 0666)
-// 	fmt.Println("[EMIT] keyfile:", keyfilePath)
-// }
-
 func worker(workerId int, pattern string, crypto common.Crypto, walletChan chan<- common.Wallet) {
 	tried := 0
 	for {
@@ -82,22 +43,17 @@ func worker(workerId int, pattern string, crypto common.Crypto, walletChan chan<
 		match, err := regexp.MatchString(pattern, walletAddress)
 		errcheck(err)
 
-		fmt.Printf("[WORKER%v] address: %v | match: %v]\n", workerId, wallet.Address, match)
+		// fmt.Printf("[WORKER%v] address: %v | match: %v]\n", workerId, wallet.Address, match)
 
 		tried++
 
-		if tried%1000 == 0 {
+		if tried%10 == 0 {
 			toJs("worker", map[string]interface{}{
-				"tried":   tried,
-				"address": wallet.Address,
+				"workerId": workerId,
+				"tried":    tried,
+				"address":  wallet.Address,
 			})
 		}
-
-		// toJs("worker", map[string]interface{}{
-		// 	"workerId": workerId,
-		// 	"address":  wallet.Address,
-		// 	"match":    match,
-		// })
 
 		// send wallet to main if matched
 		if match {
@@ -120,18 +76,9 @@ some example
 	go run main.go -c "arweave" "^6.*8$"
 */
 func generate(cryptoType string, vanityPattern string, numWorkers int, numWallets int) bool {
-	// parse commandline arguments
-	// var args args
-	// arg.MustParse(&args)
-
-	// numWorkers := args.Workers                // Number of workers to spawn
-	// numWallets := args.Count                  // Number of wallets to generate
-	// vanityPattern := args.Pattern             // Regex pattern to match the wallet address
-	// outDir := filepath.Join(args.Output)      // Output directory
 	walletChan := make(chan common.Wallet, 1) // Channel to get wallets from workers
 
 	fmt.Println("Pattern:", "/"+vanityPattern+"/")
-	// fmt.Println("Outputs:", outDir)
 	fmt.Println("Workers:", numWorkers)
 	fmt.Println("Wallets:", numWallets)
 
@@ -158,7 +105,6 @@ func generate(cryptoType string, vanityPattern string, numWorkers int, numWallet
 			"publicKey":  k.PublicKey,
 		})
 
-		// writeToFile(outDir, args.Crypto, k)
 		found = true
 	}
 
